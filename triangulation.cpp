@@ -3,7 +3,7 @@
 triangulateio triangulateXYZ(void){
 
 	// Loading data into a dynamic array
-	vector<double> xPosition(NBPNTS),yPosition(NBPNTS),zPosition(NBPNTS);
+	vector<float> xPosition(NBPNTS),yPosition(NBPNTS),zPosition(NBPNTS);
 	readPointsFromTxt("data/x.txt", xPosition);
 	readPointsFromTxt("data/y.txt", yPosition);
 	readPointsFromTxt("data/z.txt", zPosition);
@@ -31,7 +31,7 @@ triangulateio triangulateXYZ(void){
 		out.numberofpointattributes *
 		sizeof(REAL));
 
-	double maxX=xPosition[0], minX=xPosition[0],
+	float maxX=xPosition[0], minX=xPosition[0],
 		maxY=yPosition[0], minY=yPosition[0],
 		maxZ=zPosition[0], minZ=zPosition[0];
 
@@ -130,9 +130,9 @@ triangulateio triangulateXYZ(void){
 
 	return out;
 }
-void readPointsFromTxt(char* filename,vector<double> &data ){
+void readPointsFromTxt(char* filename,vector<float> &data ){
 
-	double x=0;
+	float x=0;
 	ifstream myfile(filename);
 	string line;
 

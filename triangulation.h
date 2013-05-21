@@ -24,6 +24,6 @@ extern "C"
 }
 
 triangulateio triangulateXYZ();
-void readPointsFromTxt(char* filename,vector<double> &data );
+void readPointsFromTxt(char* filename,vector<float> &data );
 
 #endif

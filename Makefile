@@ -5,8 +5,8 @@ CXX		= g++
 # Libraries
 CSWITCHES 	= -O -DLINUX -I/usr/X11R6/include -L/usr/X11R6/lib -g
 TRILIBDEFS 	= -DTRILIBRARY
-CFLAGS     	+=  -c -Wall -O2 -lGL -lglut -lGLU -g
-LDFLAGS    	+= -lGL -lglut -lGLU -g
+CFLAGS     	+=  -c -Wall -O2 -lGLEW -lGL -lglut -lGLU -g
+LDFLAGS    	+= -lGLEW -lGL -lglut -lGLU -g
 
 
 main: main.o triangulation.o triangle.o
