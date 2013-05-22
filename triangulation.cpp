@@ -12,7 +12,7 @@ triangulateio triangulateXYZ(void){
 	struct triangulateio in, mid, out, vorout;
 
 	//Input data
-	in.numberofpoints = 2*NBPNTS+2;
+	in.numberofpoints = 2*NBPNTS;
 	in.numberofpointattributes = 0;
 	in.numberofsegments = 0;
 	in.numberofholes = 0;
@@ -88,7 +88,7 @@ triangulateio triangulateXYZ(void){
 	vorout.edgelist = (int *) NULL; /* Needed only if -v switch used. */
 	vorout.normlist = (REAL *) NULL; /* Needed only if -v switch used. */
 
-	triangulate("pczAevn", &in, &mid, &vorout); //pczAevn
+	triangulate("pczAevnQ", &in, &mid, &vorout); //pczAevn
 
 	/* Attach area constraints to the triangles in preparation for */
 	/* refining the triangulation. */
@@ -106,7 +106,7 @@ triangulateio triangulateXYZ(void){
 	/* Not needed if -E switch used or number of triangle attributes is zero: */
 	out.triangleattributelist = (REAL *) NULL;
 
-	triangulate("prazBP", &mid, &out, (struct triangulateio *) NULL); //prazBP
+	triangulate("prazBPQ", &mid, &out, (struct triangulateio *) NULL); //prazBP
 
 	free(in.pointlist);
 	free(in.pointattributelist);

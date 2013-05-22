@@ -8,7 +8,7 @@
 #include <vector>
 #include <sstream>
 
-#define NBPNTS 200000
+#define NBPNTS 100000
 
 using namespace std;
 

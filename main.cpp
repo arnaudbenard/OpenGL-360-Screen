@@ -23,7 +23,8 @@ void initVBO(void){
   yMin=fullData.pointattributelist[NBPNTS+2];
   yMax=fullData.pointattributelist[NBPNTS+3];
 
-  double  zMin=fullData.pointattributelist[NBPNTS+4],zMax=fullData.pointattributelist[NBPNTS+5];
+  double  zMin=fullData.pointattributelist[NBPNTS+4],
+  zMax=fullData.pointattributelist[NBPNTS+5];
 
   for(int i_tri = 0; i_tri < fullData.numberoftriangles; i_tri++) {
 
@@ -43,9 +44,14 @@ void initVBO(void){
     }
   }
 
-  glewInit();
+  GLenum err = glewInit();
 
-  glEnable(GL_DEPTH_TEST);
+  if (GLEW_OK != err){
+    /* Problem: glewInit failed, something is seriously wrong. */
+    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+  }
+
+  /*glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
   glDepthFunc(GL_LEQUAL);
   glDepthRange(0.0f, 1.0f);
@@ -56,28 +62,33 @@ void initVBO(void){
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,size*sizeof(float), &fullData_vector[0], GL_STATIC_DRAW);
 
-  el_size=6*sizeof(float);
+  el_size=6*sizeof(float);*/
 }
 /*
  *  Display the scene
  */
 void display()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  
-  /* draw something */
-  glBegin(GL_POLYGON);
-  glColor3f(1.0,0.0,0.0);
-  glVertex2f(0.0,0.5);
-  glColor3f(0.0,1.0,0.0);
-  glVertex2f(0.5,-0.5);
-  glColor3f(0.0,0.0,1.0);
-  glVertex2f(-0.5,-0.5);
-  glEnd();
+  glOrtho(xMin, xMax,yMin,yMax, -1.0f, 1.0f);
+  glPushMatrix ();
+  glBindBuffer(GL_ARRAY_BUFFER, ID);
 
+  // Pointer for the position of the points
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_FLOAT, el_size, 0);
+
+  // Pointer for the color of the points
+  glEnableClientState(GL_COLOR_ARRAY);
+  glColorPointer(3,GL_FLOAT, el_size,(void*)(el_size/2));
+
+  //Draw callback
+  glDrawArrays(GL_TRIANGLES,0,size/6);
+
+  glPopMatrix ();
   glFlush();
-  glutSwapBuffers();
 }
 
 /*
@@ -99,13 +110,15 @@ void reshape(int width,int height)
  */
 int main(int argc,char* argv[])
 {
-  initVBO();
+  
   glutInit(&argc,argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
   glutInitWindowSize(500,500);
   glutCreateWindow("OpenGL");
+  initVBO();
   glutDisplayFunc(display);
-  glutReshapeFunc(reshape);
+  //glutReshapeFunc(reshape);
   glutMainLoop();
+
   return 0;
 }
