@@ -67,6 +67,8 @@ triangulateio triangulateXYZ(void){
 	out.pointattributelist[NBPNTS+4]=minZ;
 	out.pointattributelist[NBPNTS+5]=maxZ;
 
+	cout << minX<< maxX<<minY<<maxY<<endl;
+
 	mid.pointlist = (REAL *) NULL; /* Not needed if -N switch used. */
 	/* Not needed if -N switch used or number of point attributes is zero: */
 	mid.pointattributelist = (REAL *) NULL;
@@ -133,18 +135,19 @@ triangulateio triangulateXYZ(void){
 void readPointsFromTxt(char* filename,vector<float> &data ){
 
 	float x=0;
+	int pnts_counter=0;
 	ifstream myfile(filename);
 	string line;
 
 	if (myfile.is_open())
 	{	
-		while (myfile.good())
+		while (myfile.good() && pnts_counter<NBPNTS )
 		{	
 			getline(myfile,line);
-			istringstream(line) >> x;
-			data.push_back(x);
+			istringstream(line) >> data[pnts_counter++];
 		}
 		myfile.close();
 	}
 	else {cout << "Unable to open file"; exit(1);}
+
 }

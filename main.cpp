@@ -3,19 +3,23 @@
 /*  Globals */
 double dim=2; /* dimension of orthogonal box */
 float xMin=-1,yMin=-1,xMax=1,yMax=1;
-static int windowSize = 1024;
+static int windowSize = 500;
 GLuint ID;
 int size,el_size;
 
 void initVBO(void){
+
   float z_val=0;
   int point=0;
+  el_size=6*sizeof(float);
 
   //Loading data from the text files and applying the Delaunay algorithm
   triangulateio fullData=triangulateXYZ();
   vector<float> fullData_vector(fullData.numberoftriangles*3*6); //3 points with 6 coordinates (position and color)
 
   size=fullData_vector.size();
+
+  cout << "Number of triangles generated " << fullData.numberoftriangles<< endl;
 
   // Min max values for GlOrtho and normalization
   xMin=fullData.pointattributelist[NBPNTS];
@@ -25,7 +29,6 @@ void initVBO(void){
 
   double  zMin=fullData.pointattributelist[NBPNTS+4],
   zMax=fullData.pointattributelist[NBPNTS+5];
-
   for(int i_tri = 0; i_tri < fullData.numberoftriangles; i_tri++) {
 
     for (int i_point = 0; i_point < 3; i_point++) {
@@ -43,32 +46,36 @@ void initVBO(void){
       fullData_vector[point+5]=z_val;
     }
   }
-
+  
   GLenum err = glewInit();
 
-  if (GLEW_OK != err){
-    /* Problem: glewInit failed, something is seriously wrong. */
+  if (GLEW_OK != err)
     fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-  }
+  else
+    cout << "glewInit" << endl;
 
-  /*glEnable(GL_DEPTH_TEST);
+
+  glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
   glDepthFunc(GL_LEQUAL);
-  glDepthRange(0.0f, 1.0f);
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glDepthRange(-2.0f, 2.0f);
+  glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
   glShadeModel(GL_SMOOTH);
   glEnableClientState(GL_VERTEX_ARRAY);
+  cout << "Generate buffer" << endl;
   glGenBuffers(1,&ID);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,size*sizeof(float), &fullData_vector[0], GL_STATIC_DRAW);
+  cout << "Initialisation done!" << endl;
 
-  el_size=6*sizeof(float);*/
 }
 /*
  *  Display the scene
  */
 void display()
 {
+  cout << "Displaying on the screen" << endl;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -112,8 +119,8 @@ int main(int argc,char* argv[])
 {
   
   glutInit(&argc,argv);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
-  glutInitWindowSize(500,500);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_DEPTH | GLUT_RGB);
+  glutInitWindowSize(windowSize,windowSize);
   glutCreateWindow("OpenGL");
   initVBO();
   glutDisplayFunc(display);

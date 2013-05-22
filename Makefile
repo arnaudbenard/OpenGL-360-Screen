@@ -20,7 +20,7 @@ triangulation.o: triangulation.cpp triangulation.h triangle.h
 	$(CXX) $(CFLAGS) triangulation.cpp 
 
 main.o: main.cpp triangulation.h main.h
-	$(CXX) $(CFLAGS) $(OGLFLAGS) main.cpp
+	$(CXX) $(CFLAGS) main.cpp
 
 clean:
 	rm *o main
