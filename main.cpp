@@ -4,7 +4,7 @@
 // Globales
 double dim=2; /* dimension of orthogonal box */
 float xMin=-1,yMin=-1,xMax=1,yMax=1;
-static int windowSize = 500,size,el_size;
+static int windowSize = 100,size,el_size;
 GLuint ID;
 double yaw=0,pitch=0,roll=0, /* If z pointing at me:
                                 yaw: z-axis rotation
@@ -14,12 +14,34 @@ double yaw=0,pitch=0,roll=0, /* If z pointing at me:
 strafe=0,jump=0,dir=0; /* strafe: side to side movement.
                           jump: up down  movement
                           dir: is the direction you're pointing at*/
-
+int first=1;
 void rotate(void){
 
 
 }
+void savePixelValuesToPNG(void){
 
+  cout << "Save to PNG" << endl;
+  float* pixels = (float*)malloc(windowSize*windowSize*sizeof(float));
+  glReadPixels(0, 0, windowSize, windowSize, GL_DEPTH_COMPONENT, GL_FLOAT, pixels);
+
+  png::image< png::rgb_pixel > image(windowSize, windowSize);
+
+  float pixelValue=0;
+
+  for (size_t y = 0; y < image.get_height(); ++y)
+  {
+      for (size_t x = 0; x < image.get_width(); ++x)
+      {
+        pixelValue=(pixels[(x+1) * (y+1)-1])*255;
+        
+        image[y][x] = png::rgb_pixel(pixelValue,pixelValue,pixelValue);
+      }
+      cout <<endl;
+   }
+
+   image.write("rgb.png");
+}
 /*
  *  Initialize the vertex buffer objects
  */         
@@ -92,6 +114,7 @@ void initVBO(void){
 void display(void)
 {
   cout << "display" <<endl;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -116,6 +139,7 @@ void display(void)
 
   glPopMatrix ();
   glFlush();
+
 }
 
 /*
@@ -131,7 +155,12 @@ void reshape(int width,int height)
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
-
+void test(){
+    if(first){
+    savePixelValuesToPNG();
+    first=0;
+  }
+}
 /*
  *  Start up GLUT and tell it what to do
  */
@@ -145,6 +174,7 @@ int main(int argc,char* argv[])
   initVBO();
   glutDisplayFunc(display);
   glutReshapeFunc(reshape);
+  glutIdleFunc(test);
   glutMainLoop();
 
   return 0;
