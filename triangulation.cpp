@@ -67,8 +67,6 @@ triangulateio triangulateXYZ(void){
 	out.pointattributelist[NBPNTS+4]=minZ;
 	out.pointattributelist[NBPNTS+5]=maxZ;
 
-	cout << minX<< maxX<<minY<<maxY<<endl;
-
 	mid.pointlist = (REAL *) NULL; /* Not needed if -N switch used. */
 	/* Not needed if -N switch used or number of point attributes is zero: */
 	mid.pointattributelist = (REAL *) NULL;

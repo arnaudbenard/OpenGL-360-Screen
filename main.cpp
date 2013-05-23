@@ -1,27 +1,45 @@
 #include "main.h"
 
-/*  Globals */
+
+// Globales
 double dim=2; /* dimension of orthogonal box */
 float xMin=-1,yMin=-1,xMax=1,yMax=1;
-static int windowSize = 500;
+static int windowSize = 500,size,el_size;
 GLuint ID;
-int size,el_size;
+double yaw=0,pitch=0,roll=0, /* If z pointing at me:
+                                yaw: z-axis rotation
+                                pitch: y-axis rotation
+                                roll: x-axis rotation*/
 
+strafe=0,jump=0,dir=0; /* strafe: side to side movement.
+                          jump: up down  movement
+                          dir: is the direction you're pointing at*/
+
+void rotate(void){
+
+
+}
+
+/*
+ *  Initialize the vertex buffer objects
+ */         
 void initVBO(void){
 
   float z_val=0;
   int point=0;
-  el_size=6*sizeof(float);
 
   //Loading data from the text files and applying the Delaunay algorithm
   triangulateio fullData=triangulateXYZ();
   vector<float> fullData_vector(fullData.numberoftriangles*3*6); //3 points with 6 coordinates (position and color)
 
-  size=fullData_vector.size();
+  size=fullData_vector.size(); //Number of points
+  el_size=6*sizeof(float); //Size of one element (6 points)
 
+  cout << "Number of input points " << NBPNTS<< endl;
   cout << "Number of triangles generated " << fullData.numberoftriangles<< endl;
+  cout << "Number of generated points " << size<< endl;
 
-  // Min max values for GlOrtho and normalization
+  // Min max values for GlOrtho and normalization of the z axis (depth and color scale)
   xMin=fullData.pointattributelist[NBPNTS];
   xMax=fullData.pointattributelist[NBPNTS+1];
   yMin=fullData.pointattributelist[NBPNTS+2];
@@ -29,6 +47,7 @@ void initVBO(void){
 
   double  zMin=fullData.pointattributelist[NBPNTS+4],
   zMax=fullData.pointattributelist[NBPNTS+5];
+
   for(int i_tri = 0; i_tri < fullData.numberoftriangles; i_tri++) {
 
     for (int i_point = 0; i_point < 3; i_point++) {
@@ -54,7 +73,6 @@ void initVBO(void){
   else
     cout << "glewInit" << endl;
 
-
   glEnable(GL_DEPTH_TEST);
   glDepthMask(GL_TRUE);
   glDepthFunc(GL_LEQUAL);
@@ -66,21 +84,23 @@ void initVBO(void){
   glGenBuffers(1,&ID);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ID);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER,size*sizeof(float), &fullData_vector[0], GL_STATIC_DRAW);
-  cout << "Initialisation done!" << endl;
-
 }
+
 /*
  *  Display the scene
  */
-void display()
+void display(void)
 {
-  cout << "Displaying on the screen" << endl;
-
+  cout << "display" <<endl;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(xMin, xMax,yMin,yMax, -1.0f, 1.0f);
-  glPushMatrix ();
+
+  glRotatef(yaw, 1.0f, 0.0f, 0.0f);
+  glRotatef(pitch, 0.0f, 1.0f, 0.0f);
+  glRotatef(roll, 0.0f, 0.0f, 1.0f);
+  glTranslatef(strafe,jump,dir);
   glBindBuffer(GL_ARRAY_BUFFER, ID);
 
   // Pointer for the position of the points
@@ -124,7 +144,7 @@ int main(int argc,char* argv[])
   glutCreateWindow("OpenGL");
   initVBO();
   glutDisplayFunc(display);
-  //glutReshapeFunc(reshape);
+  glutReshapeFunc(reshape);
   glutMainLoop();
 
   return 0;
